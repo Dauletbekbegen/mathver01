@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="kk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Математика - Үй тапсырмасы</title>
+    <style>
+        :root {
+            --bg-color: #121212;
+            --container-bg: #1e1e1e;
+            --text-color: #e0e0e0;
+            --label-color: #b3b3b3;
+            --input-bg: #2c2c2c;
+            --input-border: #444;
+            --btn-bg: #007bff;
+            --btn-hover: #0056b3;
+            --btn-disabled: #555;
+        }
+
+        body { 
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
+            background-color: var(--bg-color); 
+            color: var(--text-color);
+            margin: 0;
+            padding: 20px; 
+            display: flex; 
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            box-sizing: border-box;
+        }
+
+        .container { 
+            background: var(--container-bg); 
+            padding: 30px; 
+            border-radius: 12px; 
+            box-shadow: 0 8px 20px rgba(0,0,0,0.5); 
+            width: 100%; 
+            max-width: 500px; 
+            box-sizing: border-box;
+        }
+
+        h2 { text-align: center; color: #ffffff; margin-bottom: 25px; }
+        label { font-weight: 600; margin-top: 15px; display: block; color: var(--label-color); font-size: 14px; }
+        input, select { 
+            width: 100%; padding: 12px; margin-top: 8px; margin-bottom: 10px; 
+            background-color: var(--input-bg); color: var(--text-color);
+            border: 1px solid var(--input-border); border-radius: 8px; 
+            box-sizing: border-box; font-size: 15px; outline: none; transition: 0.3s;
+        }
+        input:focus, select:focus { border-color: var(--btn-bg); }
+        input[type="file"] { padding: 10px; cursor: pointer; }
+
+        button { 
+            width: 100%; padding: 14px; margin-top: 15px; background-color: var(--btn-bg); 
+            color: white; border: none; border-radius: 8px; font-size: 16px; 
+            font-weight: bold; cursor: pointer; transition: 0.3s; 
+        }
+        button:hover { background-color: var(--btn-hover); }
+        button:disabled { background-color: var(--btn-disabled); cursor: not-allowed; }
+
+        #loader { display: none; text-align: center; margin-top: 20px; font-weight: bold; color: #4da3ff; }
+        #result { margin-top: 20px; padding: 15px; border-radius: 8px; display: none; line-height: 1.5; }
+        
+        .success { background-color: rgba(40, 167, 69, 0.1); color: #4ade80; border: 1px solid #28a745; }
+        .error { background-color: rgba(220, 53, 69, 0.1); color: #ff6b6b; border: 1px solid #dc3545; }
+        
+        /* Мотивация сөзіне арналған стиль */
+        .motivation-box {
+            margin-top: 15px;
+            padding: 10px 15px;
+            background-color: rgba(255, 193, 7, 0.15);
+            border-left: 4px solid #ffc107;
+            color: #ffdca8;
+            font-style: italic;
+            border-radius: 4px;
+        }
+
+        .footer { margin-top: 30px; text-align: center; font-size: 14px; color: #777; letter-spacing: 0.5px; }
+
+        @media (max-width: 480px) {
+            body { padding: 10px; }
+            .container { padding: 20px; border-radius: 10px; }
+            h2 { font-size: 22px; }
+            button { padding: 12px; font-size: 15px; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h2>Үй тапсырмасын жіберу</h2>
+    <form id="homeworkForm">
+        <label for="studentName">Аты-жөні:</label>
+        <input type="text" id="studentName" placeholder="Мысалы: Асан Үсенов" required>
+
+        <label for="groupName">Оқу тобы:</label>
+        <select id="groupName" required>
+            <option value="" disabled selected>Топты таңдаңыз</option>
+            <option value="АҚ-9-16г">АҚ-9-16г</option>
+            <option value="АҚ-9-36г">АҚ-9-36г</option>
+            <option value="Ет-9-56г">Ет-9-56г</option>
+            <option value="Ет-9-16г">Ет-9-16г</option>
+            <option value="БҚ-9-16г">БҚ-9-16г</option>
+        </select>
+
+        <label for="taskNumber">Есеп нөмірі (немесе тақырыбы):</label>
+        <input type="text" id="taskNumber" placeholder="Мысалы: 45-есеп" required>
+
+        <label for="homeworkFiles">Суреттер (бірнеше сурет таңдауға болады):</label>
+        <input type="file" id="homeworkFiles" accept="image/*" multiple required>
+
+        <button type="submit" id="submitBtn">Тексеруге Жіберу</button>
+    </form>
+
+    <div id="loader">Жүйе суреттерді тексеруде... Күте тұрыңыз ⏳</div>
+    <div id="result"></div>
+</div>
+
+<div class="footer">created by Daulet agai</div>
+
+<script>
+    // 1. ОСЫ ЖЕРГЕ ЖАҢА "WEB APP URL" СІЛТЕМЕСІН ҚОЙЫҢЫЗ
+    const GAS_URL = "https://script.google.com/macros/s/AKfycbwkN5Auena-RNxI144JCuhAilH8D6s6aag5io_FZPu7qxPu1DrruRzU7pgmA87-yj2yOg/exec";
+
+    document.getElementById('homeworkForm').addEventListener('submit', async function(e) {
+        e.preventDefault();
+        
+        const submitBtn = document.getElementById('submitBtn');
+        const loader = document.getElementById('loader');
+        const resultDiv = document.getElementById('result');
+        const fileInput = document.getElementById('homeworkFiles');
+        
+        if(fileInput.files.length === 0) return alert("Сурет таңдаңыз!");
+
+        submitBtn.disabled = true;
+        loader.style.display = "block";
+        resultDiv.style.display = "none";
+
+        const filesBase64 = [];
+        for (let i = 0; i < fileInput.files.length; i++) {
+            const file = fileInput.files[i];
+            const base64 = await toBase64(file);
+            filesBase64.push({ name: file.name, mimeType: file.type, base64: base64.split(',')[1] });
+        }
+
+        const payload = {
+            studentName: document.getElementById('studentName').value,
+            groupName: document.getElementById('groupName').value,
+            taskNumber: document.getElementById('taskNumber').value,
+            files: filesBase64
+        };
+
+        try {
+            const response = await fetch(GAS_URL, {
+                method: "POST",
+                headers: { "Content-Type": "text/plain;charset=utf-8" }, 
+                body: JSON.stringify(payload)
+            });
+
+            const result = await response.json();
+
+            loader.style.display = "none";
+            resultDiv.style.display = "block";
+
+            if (result.status === "success") {
+                resultDiv.className = "success";
+                // Жауапқа мотивациялық блокты қосу
+                resultDiv.innerHTML = `
+                    <strong>Тексерілді!</strong><br><br>
+                    <b>Баға:</b> ${result.score}<br><br>
+                    <b>Пікір:</b> ${result.feedback}
+                    <div class="motivation-box">💡 ${result.motivation}</div>
+                `;
+                document.getElementById('homeworkForm').reset();
+            } else {
+                resultDiv.className = "error";
+                resultDiv.innerHTML = `Қате шықты: ${result.message}`;
+            }
+        } catch (error) {
+            loader.style.display = "none";
+            resultDiv.style.display = "block";
+            resultDiv.className = "error";
+            resultDiv.innerHTML = "Серверге қосылу мүмкін болмады. Бәлкім жүйеге көп адам кірген болар, кішкене күте тұрып қайта басыңыз.";
+        }
+
+        submitBtn.disabled = false;
+    });
+
+    const toBase64 = file => new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.readAsDataURL(file);
+        reader.onload = () => resolve(reader.result);
+        reader.onerror = error => reject(error);
+    });
+</script>
+
+</body>
+</html>
