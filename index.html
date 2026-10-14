@@ -2,7 +2,8 @@
 <html lang="kk">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <meta name="theme-color" content="#0b0d12">
     <title>Математика – Үй тапсырмасы</title>
     <style>
         /* ---------- ДИЗАЙН ЖҮЙЕСІ ---------- */
@@ -33,16 +34,23 @@
             box-sizing: border-box;
         }
 
+        html {
+            -webkit-text-size-adjust: 100%;
+            text-size-adjust: 100%;
+        }
+
         body {
             font-family: 'Inter', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             background: radial-gradient(ellipse at 50% 0%, #1a1f2e 0%, #0b0d12 70%);
+            background-attachment: fixed;
             color: var(--text-primary);
             display: flex;
             flex-direction: column;
             align-items: center;
-            justify-content: center;
             min-height: 100vh;
+            min-height: 100dvh; /* ✅ Мобильді браузерлер үшін */
             padding: 24px 16px;
+            padding: max(24px, env(safe-area-inset-top)) max(16px, env(safe-area-inset-right)) max(24px, env(safe-area-inset-bottom)) max(16px, env(safe-area-inset-left));
             line-height: 1.5;
             -webkit-font-smoothing: antialiased;
             position: relative;
@@ -58,7 +66,6 @@
             z-index: 0;
         }
 
-        /* Қалқып жүретін таңбалар */
         .math-bg span {
             position: absolute;
             font-family: 'JetBrains Mono', 'Cambria Math', serif;
@@ -83,7 +90,6 @@
             }
         }
 
-        /* Әр таңбаның орны, өлшемі, жылдамдығы */
         .math-bg span:nth-child(1)  { left: 4%;  font-size: 100px; animation-duration: 30s; animation-delay: 0s;   }
         .math-bg span:nth-child(2)  { left: 16%; font-size: 60px;  animation-duration: 36s; animation-delay: -5s;  }
         .math-bg span:nth-child(3)  { left: 28%; font-size: 130px; animation-duration: 46s; animation-delay: -12s; }
@@ -95,7 +101,6 @@
         .math-bg span:nth-child(9)  { left: 10%; font-size: 80px;  animation-duration: 38s; animation-delay: -24s; }
         .math-bg span:nth-child(10) { left: 62%; font-size: 90px;  animation-duration: 44s; animation-delay: -28s; }
 
-        /* Статикалық формулалар — жартылай мөлдір, бұрыштарда */
         .math-formula {
             position: absolute;
             font-family: 'JetBrains Mono', 'Cambria Math', serif;
@@ -113,12 +118,13 @@
         .math-formula.f5 { top: 55%;  left: 2%;  transform: rotate(-12deg); }
         .math-formula.f6 { top: 70%;  right: 2%; transform: rotate(10deg);  }
 
-        /* ---------- КОНТЕЙНЕР ---------- */
+        /* ---------- КОНТЕЙНЕР (✅ margin: auto тәсілі) ---------- */
         .container {
             position: relative;
             z-index: 1;
             width: 100%;
             max-width: 520px;
+            margin: auto; /* ✅ Top/bottom auto — контент кесілмейді */
             background: var(--surface);
             border: 1px solid var(--border);
             border-radius: var(--radius-lg);
@@ -179,7 +185,7 @@
             border: 1.5px solid var(--border);
             border-radius: var(--radius-sm);
             color: var(--text-primary);
-            font-size: 0.95rem;
+            font-size: 1rem; /* ✅ 16px — iOS авто-zoom болдырмайды */
             font-family: inherit;
             outline: none;
             transition: var(--transition);
@@ -226,6 +232,8 @@
             border: 1.5px dashed var(--border);
             border-radius: var(--radius-sm);
             transition: var(--transition);
+            overflow: hidden;
+            text-overflow: ellipsis;
         }
 
         input[type="file"]:hover {
@@ -237,19 +245,18 @@
             background: var(--accent);
             color: #fff;
             border: none;
-            padding: 8px 18px;
+            padding: 8px 16px;
             border-radius: 8px;
             font-weight: 600;
             font-size: 0.85rem;
             cursor: pointer;
-            margin-right: 14px;
+            margin-right: 12px;
             transition: var(--transition);
             font-family: inherit;
         }
 
         input[type="file"]::file-selector-button:hover {
             background: var(--accent-hover);
-            transform: translateY(-1px);
         }
 
         /* ---------- БАҚЫЛАУ ТҮЙМЕСІ ---------- */
@@ -270,6 +277,8 @@
             position: relative;
             overflow: hidden;
             box-shadow: 0 4px 20px rgba(76, 122, 255, 0.35);
+            -webkit-tap-highlight-color: transparent;
+            touch-action: manipulation;
         }
 
         button::before {
@@ -326,6 +335,8 @@
             display: none;
             line-height: 1.6;
             font-size: 0.95rem;
+            word-wrap: break-word;
+            overflow-wrap: break-word;
             animation: fadeSlideIn 0.4s ease-out;
         }
 
@@ -396,48 +407,165 @@
             font-size: 0.6rem;
         }
 
-        /* ---------- МОБИЛЬДІ БЕЙІМДЕУ ---------- */
-        @media (max-width: 480px) {
+        /* ============================================
+           МОБИЛЬДІ БЕЙІМДЕУ (✅ ТҮЗЕТІЛГЕН)
+           ============================================ */
+        @media (max-width: 600px) {
             body {
-                padding: 12px 10px;
+                padding: 12px 12px;
+                padding: max(12px, env(safe-area-inset-top)) max(12px, env(safe-area-inset-right)) max(12px, env(safe-area-inset-bottom)) max(12px, env(safe-area-inset-left));
             }
+
             .container {
-                padding: 26px 20px;
+                padding: 24px 18px;
                 border-radius: var(--radius-md);
+                max-width: 100%;
             }
+
             h2 {
-                font-size: 1.55rem;
-                margin-bottom: 26px;
+                font-size: 1.4rem;
+                margin-bottom: 22px;
+                padding: 0 4px;
             }
+
+            h2::after {
+                width: 48px;
+                height: 2.5px;
+                margin-top: 10px;
+            }
+
             label {
-                font-size: 0.8rem;
-                margin-top: 18px;
+                font-size: 0.78rem;
+                margin-top: 16px;
+                margin-bottom: 6px;
             }
+
+            /* ✅ 16px — iOS авто-zoom болдырмау үшін */
             input, select {
-                padding: 12px 14px;
-                font-size: 0.9rem;
+                padding: 13px 14px;
+                font-size: 16px;
+                line-height: 1.4;
             }
+
+            select {
+                padding-right: 40px;
+                background-position: right 14px center;
+            }
+
+            input[type="file"] {
+                padding: 11px 12px;
+                font-size: 0.82rem;
+            }
+
+            input[type="file"]::file-selector-button {
+                padding: 7px 12px;
+                font-size: 0.78rem;
+                margin-right: 8px;
+            }
+
             button {
                 padding: 14px;
                 font-size: 0.95rem;
                 margin-top: 22px;
             }
-            #result {
-                padding: 16px 18px;
-                font-size: 0.9rem;
+
+            #loader {
+                font-size: 0.88rem;
+                margin-top: 18px;
             }
+
+            #result {
+                padding: 16px 16px;
+                font-size: 0.9rem;
+                margin-top: 18px;
+            }
+
             .motivation-box {
                 padding: 12px 14px;
-                font-size: 0.87rem;
+                font-size: 0.85rem;
+                margin-top: 14px;
             }
+
             .footer {
-                font-size: 0.72rem;
-                margin-top: 22px;
+                font-size: 0.7rem;
+                margin-top: 20px;
             }
-            .math-bg span:nth-child(3),
-            .math-bg span:nth-child(5),
-            .math-bg span:nth-child(7) { font-size: 70px; }
-            .math-formula { font-size: 11px; }
+
+            /* ✅ Фондағы таңбаларды кішірейту — экран кіші */
+            .math-bg span:nth-child(1) { font-size: 70px; }
+            .math-bg span:nth-child(2) { font-size: 42px; }
+            .math-bg span:nth-child(3) { font-size: 90px; }
+            .math-bg span:nth-child(4) { font-size: 50px; }
+            .math-bg span:nth-child(5) { font-size: 80px; }
+            .math-bg span:nth-child(6) { font-size: 45px; }
+            .math-bg span:nth-child(7) { font-size: 85px; }
+            .math-bg span:nth-child(8) { font-size: 36px; }
+            .math-bg span:nth-child(9) { font-size: 55px; }
+            .math-bg span:nth-child(10) { font-size: 62px; }
+
+            .math-formula { font-size: 10px; letter-spacing: 1px; }
+            .math-formula.f1,
+            .math-formula.f5 { display: none; } /* Кіші экранда шектен шықпау үшін */
+        }
+
+        /* ✅ Өте кіші экрандар үшін қосымша түзету */
+        @media (max-width: 360px) {
+            body {
+                padding: 8px 8px;
+            }
+            .container {
+                padding: 20px 14px;
+            }
+            h2 {
+                font-size: 1.25rem;
+                margin-bottom: 18px;
+            }
+            label {
+                font-size: 0.72rem;
+                margin-top: 14px;
+            }
+            button {
+                padding: 13px;
+                font-size: 0.9rem;
+            }
+            #result {
+                padding: 14px 14px;
+                font-size: 0.85rem;
+            }
+            .math-formula { display: none; } /* Өте кіші экранда формулаларды жасыру */
+        }
+
+        /* ✅ Ландшафт режимі үшін */
+        @media (max-height: 500px) and (orientation: landscape) {
+            body {
+                padding: 12px;
+            }
+            .container {
+                padding: 20px 24px;
+            }
+            h2 {
+                font-size: 1.4rem;
+                margin-bottom: 18px;
+            }
+            label {
+                margin-top: 14px;
+            }
+            button {
+                margin-top: 18px;
+            }
+        }
+
+        /* ✅ Қозғалысты азайту режимі (пайдаланушы таңдауы) */
+        @media (prefers-reduced-motion: reduce) {
+            .math-bg span {
+                animation: none;
+            }
+            #loader {
+                animation: none;
+            }
+            #result {
+                animation: none;
+            }
         }
 
         /* ---------- СКРОЛЛБАР ---------- */
@@ -460,7 +588,6 @@
 
 <!-- ============ ФОНДАҒЫ МАТЕМАТИКАЛЫҚ ЭЛЕМЕНТТЕР ============ -->
 <div class="math-bg" aria-hidden="true">
-    <!-- Қалқып жүретін таңбалар -->
     <span>π</span>
     <span>∑</span>
     <span>∫</span>
@@ -472,7 +599,6 @@
     <span>φ</span>
     <span>∂</span>
 
-    <!-- Статикалық формулалар -->
     <div class="math-formula f1">∫ f(x) dx = F(x) + C</div>
     <div class="math-formula f2">E = mc²</div>
     <div class="math-formula f3">a² + b² = c²</div>
@@ -486,7 +612,7 @@
     <h2>Үй тапсырмасын тапсыру</h2>
     <form id="homeworkForm">
         <label for="studentName">Аты-жөні:</label>
-        <input type="text" id="studentName" placeholder="Мысалы: Асан Үсенов" required>
+        <input type="text" id="studentName" placeholder="Мысалы: Асан Үсенов" required autocomplete="name">
 
         <label for="groupName">Оқу тобы:</label>
         <select id="groupName" required>
@@ -514,8 +640,7 @@
 <div class="footer">created by Daulet agai</div>
 
 <script>
-    // 1. ОСЫ ЖЕРГЕ ЖАҢА "WEB APP URL" СІЛТЕМЕСІН ҚОЙЫҢЫЗ
-    const GAS_URL = "https://script.google.com/macros/s/AKfycby-xM4liGH7WL2FKhEXDzm1jjYiXS8LhVIF5V8LQPpCidAmYE5zIAiZUTlnp4jyWS84gw/exec";
+    const GAS_URL = "https://script.google.com/macros/s/AKfycbyHWCdQi82zw98FYVJQwHpoEPSugVryF24OdpY8eEAtWFS_JLhikAL9sc0FllCM-hnM8A/exec";
 
     document.getElementById('homeworkForm').addEventListener('submit', async function(e) {
         e.preventDefault();
